@@ -40,6 +40,21 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+            <div class="mb-3">
+                <div><label class="form-label">Tecnologie</label></div>
+                @foreach ($technologies as $technology)
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="tag-{{ $technology->id }}"
+                            value="{{ $technology->id }}" name="technologies[]"
+                            @if (is_array(old('technologies')) && in_array($technology->id, old('technologies'))) checked @endif>
+                        <label class="form-check-label" for="tag-{{ $technology->id }}">{{ $technology->title }}</label>
+                    </div>
+                @endforeach
+                @error('technologies')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+            </div>
+
 
             <button type="submit" class="btn btn-success"><i class="fas fa-check"></i>
                 Inserisci</button>

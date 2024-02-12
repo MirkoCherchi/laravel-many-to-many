@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Support\Str;
 
@@ -25,8 +26,9 @@ class ProjectController extends Controller
      */
     public function create()
     {
+        $technologies = Technology::all();
         $types = Type::all();
-        return view('admin.projects.create', compact('types'));
+        return view('admin.projects.create', compact('types', 'technologies'));
     }
 
     /**
@@ -44,7 +46,13 @@ class ProjectController extends Controller
 
         $project->fill($data);
 
+
         $project->save();
+
+
+        if (isset($data['technologies'])) {
+            $project->technologies()->sync($data['technologies']);
+        }
 
         return redirect()->route('admin.projects.index')->with('success', 'Il progetto "' . $project->title . '" è stato creato correttamente.');
     }
@@ -62,8 +70,9 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        $technologies = Technology::all();
         $types = Type::all();
-        return view('admin.projects.edit', compact('project', 'types'));
+        return view('admin.projects.edit', compact('project', 'types', 'technologies'));
     }
 
     /**
@@ -77,6 +86,12 @@ class ProjectController extends Controller
         $data['slug'] = Str::slug($request->title);
         $project->update($data);
 
+        if (isset($data['technologies'])) {
+            $project->technologies()->sync($data['technologies']);
+        } else {
+            $project->technologies()->sync([]);
+        }
+
         return redirect()->route('admin.projects.index');
     }
 
@@ -85,6 +100,8 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        $project->technologies()->sync([]);
+
         $project->delete();
 
         return redirect()->route('admin.projects.index')->with('message', 'Il progetto "' . $project->title . '" è stato eliminato correttamente.');
@@ -104,7 +121,9 @@ class ProjectController extends Controller
         $this->validate($request, [
             'title' => 'required|max:30',
             'description' => 'nullable',
-            'type_id' => 'nullable|exists:types,id'
+            'type_id' => 'nullable|exists:types,id',
+            'technologies' => 'nullable|exists:technologies,id',
+
 
         ], $messages);
     }

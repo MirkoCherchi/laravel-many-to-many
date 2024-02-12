@@ -17,6 +17,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('technology_id');
             $table->foreign('technology_id')->references('id')->on('technologies');
+            $table->timestamps();
         });
     }
 

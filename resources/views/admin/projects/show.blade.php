@@ -13,7 +13,17 @@
                         <h5 class="card-title text-center">{{ $project->title }}</h5>
                         <p class="card-text"><strong>Descrizione:</strong> {{ $project->description }}</p>
 
-                        <p class="card-text"><strong>Tipo:</strong> {{ $project->type?->title }}</p>
+                        <p class="card-text"><strong>Tipo:</strong> {{ $project->type?->title ?: 'Nessun Tipo' }}</p>
+                        <p class="card-text"><strong>Tecnologie:</strong>
+                        <ul>
+                            @foreach ($project->technologies as $technology)
+                                <li> {{ $technology?->title ?: 'Nessun Tipo' }}</li>
+                            @endforeach
+
+                        </ul>
+                        </p>
+
+
                     </div>
 
                     <div class="mt-3 text-center">
